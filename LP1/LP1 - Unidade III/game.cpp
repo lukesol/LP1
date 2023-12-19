@@ -11,7 +11,7 @@ Game::Game(string name_player)
 }
 
 void Game::Open_create_file(){
-    /* this-> */arquivoPalavras.open("palavras.txt");
+    arquivoPalavras.open("palavras.txt");
     
     if (!arquivoPalavras.is_open())
     {
@@ -19,7 +19,7 @@ void Game::Open_create_file(){
         exit(EXIT_FAILURE);
     }
 
-    /* this-> */arquivoHistorico.open("historico.txt", std::ofstream::app);
+    arquivoHistorico.open("historico.txt", std::ofstream::app);
 
     if (!arquivoHistorico.is_open())
     {
@@ -30,11 +30,10 @@ void Game::Open_create_file(){
 
 void Game::Read_file_words()
 {
-    // string *palavras = nullptr;string *palavras = nullptr;
-
-        palavras = new string[tamanho]; // Alocando memória inicialmente
-
         string palavra;
+
+        palavras = new string[tamanho]; // Alocando memória com tamanho inicial
+
         while (arquivoPalavras >> palavra)
         {
             if (quantidadePalavras == tamanho)
@@ -50,34 +49,28 @@ void Game::Read_file_words()
 
                 delete[] palavras; // Libera a memória do array anterior
                 palavras = temp;   // Aponta para o novo array
+            }else{
+                palavras[quantidadePalavras++] = palavra;
             }
 
-            palavras[quantidadePalavras++] = palavra;
         }
-        /* this-> */arquivoPalavras.close();
+        arquivoPalavras.close();
 }
 
 void Game::Play()
 {   
-        delete[] palavras; // Libera memória utilizada para palavras
-
-        tamanho = 10; // Reseta tamanho
-
-        letrasTentadas.clear(); // Limpa letras tentadas
-
-        palavraAdivinhada.clear();
-
-        palavraParaAdivinhar.clear();
-
 
         Read_file_words();
 
+        int tentativasIncorretas = 0;
         srand(static_cast<unsigned int>(time(0)));
         int indiceAleatorio = rand() % quantidadePalavras;
+
         palavraParaAdivinhar = palavras[indiceAleatorio];
+
         jogador.set_game_played(TurnInfo{palavraParaAdivinhar, false});
         
-        int tentativasIncorretas = 0;
+
         palavraAdivinhada.append(palavraParaAdivinhar.length(), '_');
 
 
@@ -128,34 +121,39 @@ void Game::Play()
             }
         }
 
-
-        if (palavraAdivinhada == palavraParaAdivinhar)
-        {
-            jogador.set_game_played(TurnInfo{palavraParaAdivinhar, true}); 
-            cout << "Parabéns! Você adivinhou a palavra: " << palavraParaAdivinhar << endl;
+        if(palavraAdivinhada != "" and palavraParaAdivinhar != ""){
+            if (palavraAdivinhada.compare(palavraParaAdivinhar) == 0)
+            {
+                jogador.set_game_played(TurnInfo{palavraParaAdivinhar, true}); 
+                cout << "Parabéns! Você adivinhou a palavra: " << palavraParaAdivinhar << endl;
+            }
+            else
+                cout << "Você excedeu o número máximo de tentativas. A palavra era: " << palavraParaAdivinhar << endl;
         }
-        else
-            cout << "Você excedeu o número máximo de tentativas. A palavra era: " << palavraParaAdivinhar << endl;
 
+
+        Write_history();
 }
 
 void Game::Write_history(){
     TurnInfo info_jogador = jogador.get_turn_info();
 
     if (info_jogador.win)
-        arquivoHistorico << "Jogador: " << jogador.get_name() << " Palavra: " << info_jogador.word << " - Resultado: Acertou" << endl;
+        arquivoHistorico << "Jogador: " << jogador.get_name() << " Palavra: " << palavraParaAdivinhar << " - Resultado: Acertou" << endl;
     else
-        arquivoHistorico << "Jogador: " << jogador.get_name() << " Palavra: " << info_jogador.word << " - Resultado: Errou" << endl;
+        arquivoHistorico << "Jogador: " << jogador.get_name() << " Palavra: " << palavraParaAdivinhar << " - Resultado: Errou" << endl;
 
 
         arquivoHistorico.close(); // Fecha o arquivo de histórico
 
+        End_game();
+
 }
         
-
 void Game::End_game()
 {
     
+    if(palavraAdivinhada != "" and palavraParaAdivinhar != ""){
         // Pergunta ao usuário se deseja jogar novamente
         cout << "Deseja jogar novamente? (S/N): ";
         char escolha;
@@ -166,6 +164,16 @@ void Game::End_game()
             cout << "Obrigado por jogar! Até a próxima." << endl;
             set_game_over(true); // Sai do loop se a escolha não for 'S'
         }
+    }
 
+        delete[] palavras; // Libera memória utilizada para palavras
+
+        tamanho = 10; // Reseta tamanho
+
+        letrasTentadas.clear(); // Limpa letras tentadas
+
+        palavraAdivinhada.clear();
+
+        palavraParaAdivinhar.clear();
        
 }

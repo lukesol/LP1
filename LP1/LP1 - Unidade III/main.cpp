@@ -2,13 +2,11 @@
 
 int main()
 {
-    Game game("Humano");
+    Game game("Humano"); // Inicializando
 
     while(!game.game_over())
     {
         game.Play();
-        game.Write_history();
-        game.End_game();
     }
 
     return EXIT_SUCCESS;

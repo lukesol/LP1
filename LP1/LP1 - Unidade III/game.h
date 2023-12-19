@@ -21,8 +21,7 @@ private:
     Player jogador;
 public:
     Game(string name_player);
-    // ~Game() = default;
-    ~Game() = default;
+    Game() = delete;
     
     void Open_create_file();
     void Read_file_words();

@@ -1,1 +1,0 @@
-Jogador: Humano Palavra: futebol - Resultado: Errou
