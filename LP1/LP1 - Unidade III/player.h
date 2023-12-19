@@ -11,29 +11,23 @@
 using namespace std;
 
 struct TurnInfo {
-    short pts; //!< Accumulated points of a turn in progress.
-    short n_try; //!< # of dice roll of a turn in progress.
+    string word;
+    bool win; 
 };
 
-class player
+class Player
 {
 private:
     string m_name;
-    string m_name;
+    TurnInfo game_played;
 public:
-    player(/* args */);
-    ~player();
+    Player() = default;
+
+    void set_name(string name){ m_name = name; };
+    void set_game_played(TurnInfo play){ game_played.win = play.win; game_played.word = play.word; };
+    TurnInfo get_turn_info(){ return game_played; };
+    string get_name(){ return m_name; };
 };
-
-player::player(/* args */)
-{
-}
-
-player::~player()
-{
-}
-
-
 
 
 #endif

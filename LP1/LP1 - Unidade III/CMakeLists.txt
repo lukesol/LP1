@@ -7,7 +7,8 @@ set( APP_NAME "forca" )
 
 # Components
 add_executable( ${APP_NAME}
-    "main.cpp")
+    "main.cpp"
+    "game.cpp")
 
 # C++ Version
 target_compile_features( ${APP_NAME}  PUBLIC cxx_std_17 )
